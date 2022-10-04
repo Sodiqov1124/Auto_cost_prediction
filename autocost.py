@@ -1,10 +1,15 @@
 import pandas as pd
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, mean_absolute_error, r2_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 """Company GM Uzbekistan decided to sell their cars around the world
  and they gave me this project to predict their car's cost
    via compare with wolrd car's character's """
 df = pd.read_csv("auto_costs.csv")
 print(df.loc[3])
-
 #First I have cleaned this dataset
 def clean_data(data):
     df = pd.read_csv(data)
@@ -20,71 +25,19 @@ def clean_data(data):
     df["cylindernumber"] = df["cylindernumber"].replace("four", "4").replace("three", "43").replace("six", "6").replace("two", "2").replace("five", "5").replace("eight", "8").replace("twelve", "12")
     return df
 dataset = clean_data(data = "auto_costs.csv")
-
-print(dataset.describe())
-print(dataset.corr())
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 def show_with_heatmap(data):
     plt.figure(figsize=(14, 12))
     ddf = dataset.copy()
     ddf = ddf.corr()
-
     sns.heatmap(ddf, annot=True, cmap='YlGnBu', cbar_kws={"orientation": "horizontal"})
     plt.show()
 show_with_heatmap(dataset)
 def set_style(data):
-    sns.set_style("whitegrid")
-    plt.figure(figsize=(15, 10))
-    sns.distplot(dataset.price)
+    # plt.figure(figsize=(15, 10))
+    sns.displot(data=dataset, x=dataset['price'], kde=True)
     plt.show()
+
 set_style(dataset)
-
-from sklearn.tree import DecisionTreeRegressor
-from matplotlib import pyplot as plt
-from sklearn.svm import SVC
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn import model_selection
-from sklearn.model_selection import KFold
-def my_print_and_test_models(dt):
-    m1 = DecisionTreeClassifier()
-    m2 = GaussianNB()
-    m3 = KNeighborsClassifier()
-    m4 = LogisticRegression(solver='liblinear', multi_class='ovr')
-    m5 = LinearDiscriminantAnalysis()
-    m6 = SVC(gamma='auto')
-
-    array = dt.values
-    X = array[:,0:4]
-    y = array[:,4]
-    X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, y, test_size=0.3, random_state=1)
-    mr1 = cross_val_score(m1, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    mr2 = cross_val_score(m2, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    mr3 = cross_val_score(m3, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    mr4 = cross_val_score(m4, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    mr5 = cross_val_score(m5, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    mr6 = cross_val_score(m6, X_train, Y_train, cv=KFold(n_splits=2), scoring='accuracy')
-    model1 = DecisionTreeRegressor()
-    model1.fit(X_train, Y_train)
-    predictions = model1.predict(X_validation)
-    print("DecisionTreeRegressor:",model1.score(X_validation, predictions))
-    print('%s: %f (%f)' % ('DecisionTree', mr1.mean(), mr1.std()))
-    print('%s: %f (%f)' % ('GaussianNB', mr2.mean(), mr2.std()))
-    print('%s: %f (%f)' % ('KNeighbors', mr3.mean(), mr3.std()))
-    print('%s: %f (%f)' % ('LogisticRegression', mr4.mean(), mr4.std()))
-    print('%s: %f (%f)' % ('LinearDiscriminant', mr5.mean(), mr5.std()))
-    print('%s: %f (%f)' % ('SVM', mr6.mean(), mr6.std()))
-
-
-
-
-# my_print_and_test_models(dataset)
 def new_value(data):
     predict = "price"
     data = data[["fueltypes","wheelbase", "carlength",
@@ -94,12 +47,7 @@ def new_value(data):
                  "citympg", "highwaympg", "price"]]
     x = np.array(data.drop([predict], axis = 1))
     y = np.array(data[predict])
-
-    from sklearn.model_selection import train_test_split
-    from sklearn.metrics import accuracy_score, mean_absolute_error, r2_score
     xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2)
-
-    from sklearn.tree import DecisionTreeRegressor
     model = DecisionTreeRegressor()
     model.fit(xtrain, ytrain)
     predictions = model.predict(xtest)
