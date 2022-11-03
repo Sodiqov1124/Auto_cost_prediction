@@ -56,5 +56,5 @@ def new_value(data):
     Nissan_X_Trail_HP_4_x2_Visia_Engine = np.array([1,270.6,464.3,182.0,169.5,1505,4,0,0,10.5,163,5600,30,44]).reshape(1, -1)
     malibu2 = np.array([1,111.4,193.8,73,57.6,3184,4,0,0,9.5,160,5700,25,34]).reshape(1, -1)
     pred_car = model.predict(malibu2)
-    print("Bu avtomobilning  taxminiy narxi $",round(pred_car[0]))
+    print("Bu avtomobilning  taxminiy narxi bunday:$",round(pred_car[0]))
 new_value(dataset)
